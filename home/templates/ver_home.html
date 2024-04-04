@@ -60,7 +60,7 @@
 </head>
 <body>
     <h1>Gestor de Pedidos Frutos de Goiás</h1>
-    <form method="post" action="{% url 'ver_home' %}">  <!-- Atualizado para usar a URL de login do Django -->
+    <form method="POST" action="{% url 'ver_home' %}">  <!-- Atualizado para usar a URL de login do Django -->
         {% csrf_token %}
         {% if form.errors %}
             <p class="error">Nome de usuário ou senha incorretos. Tente novamente.</p>
