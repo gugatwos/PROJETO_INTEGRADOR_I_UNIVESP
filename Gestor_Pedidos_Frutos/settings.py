@@ -32,12 +32,15 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.sites',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home'
+    'django.contrib.redirects',
+    'home',
+    'lojistas',
 ]
 
 MIDDLEWARE = [
@@ -48,9 +51,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'Gestor_Pedidos_Frutos.urls'
+
+SITE_ID = 1
 
 TEMPLATES = [
     {
@@ -76,8 +82,12 @@ WSGI_APPLICATION = 'Gestor_Pedidos_Frutos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'databasegestor',
+        'USER': 'root',
+        'PASSWORD': 'Univesp55*',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
