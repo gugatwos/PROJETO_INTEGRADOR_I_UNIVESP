@@ -1,27 +1,59 @@
-from django.contrib.auth import authenticate, login
+from django.contrib import auth, messages
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate
+from django.contrib.messages import constants
+from django.contrib.auth.models import User
+
+from django.contrib import auth, messages
+from django.shortcuts import render, redirect
+from django.contrib.messages import constants
+from django.contrib.auth.models import User
+
+def index(request):
+    if request.method == "GET":
+        return render(request, 'index.html')
+    elif request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get("password")
+
+        user = auth.authenticate(request, username=username, password=password)
+
+        if user:
+            auth.login(request, user)
+            return redirect('/lojistas/estoque')
+
+        messages.add_message(request, constants.ERROR, 'Usuário ou senha incorretos')
+        return redirect('/home/index')
 
 
+def cadastro(request):
+    if request.method == "GET":
+        return render(request, 'cadastro.html')
+    elif request.method == "POST":
+        username = request.POST.get('username')
+        email = request.POST.get("email")
+        senha = request.POST.get("senha")
+        confirmar_senha = request.POST.get('confirmar_senha')
 
-def ver_home(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                
-                return HttpResponse('você foi logado')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'ver_home.html', {'form': form})
+        users = User.objects.filter(username=username)
 
-def login(request):
-    return HttpResponse('Aqui você pode realizar seus pedidos')
+        if users.exists():
+            messages.add_message(request, constants.ERROR, 'Já existe um usuário com esse ursername')
+            return redirect('/home/cadastro')
 
-def inserir_home(request):
-    return HttpResponse('Aqui você pode realizar seus pedidos')
+        if senha != confirmar_senha:
+            messages.add_message(request, constants.ERROR, 'A senha não corresponde com a confirmação da senha')
+            return redirect('/home/cadastro')
+        
+        try:
+            User.objects.create_user(
+                username=username,
+                email=email,
+                password=senha
+            )
+            return redirect('/home/index')
+        except:            
+            return redirect('/home/cadastro')
+
+def sair(request):
+    auth.logout(request)
+    return redirect('/home/index')
