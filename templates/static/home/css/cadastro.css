@@ -1,0 +1,65 @@
+:root {
+    --main-color: #008000;      /* Verde */
+    --dark-color: #3509a6;      /* Roxo */
+    --contrast-color: #e8dfcc;  /* Creme */
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    zoom: 0.9;
+  }
+  
+  .input-field {
+    width: 70%;                 /* Largura do campo */
+    height: 40px;               /* Altura do campo */
+    padding: 5px 10px;          /* Padding interno */
+    margin-bottom: 20px;        /* Espaço entre campos */
+    font-size: 10px;            /* Tamanho da fonte */
+    border: 1px solid var(--dark-color); /* Borda roxa */
+    border-radius: 5px;         /* Cantos arredondados */
+    background-color: var(--contrast-color); /* Fundo creme */
+    color: var(--dark-color);   /* Cor do texto roxo */
+  }
+  
+  .input-field:focus {
+    outline: none;              /* Remove o contorno padrão ao focar */
+    box-shadow: 0 0 5px var(--main-color); /* Sombra verde ao focar */
+  }
+  
+  .btn-submit {
+    width: 50%;
+    padding: 10px;
+    font-size: 10px;
+    color: #fff;
+    background-color: var(--main-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;            /* Estilo do cursor como ponteiro */
+  }
+  
+  .btn-submit:hover {
+    background-color: #005a27;  /* Verde escuro ao passar o mouse */
+  }
+  
+  .card {
+    width: 450px;
+    height: auto;               /* Altura automática baseada no conteúdo */
+    margin: 20px auto;          /* Centraliza horizontalmente com espaço */
+    padding: 20px;
+    border-radius: 10px;        /* Cantos arredondados */
+    background-color: #ffffff;  /* Fundo branco */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Sombra */
+  }
+  
+  .card-header {
+    background-color: transparent;
+    border: 0;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;     /* Organiza os itens em coluna */
+    align-items: center;        /* Centraliza itens horizontalmente */
+    margin-bottom: 15px;        /* Espaço abaixo de cada grupo de formulário */
+  }
+  

@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = 'login'
+
 
 # Application definition
 
@@ -37,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home'
+    'home',
+    'lojistas',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +54,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Gestor_Pedidos_Frutos.urls'
+
+SITE_ID = 1
 
 TEMPLATES = [
     {
@@ -76,8 +81,13 @@ WSGI_APPLICATION = 'Gestor_Pedidos_Frutos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'databasegestor',
+        'USER': 'root',
+        'PASSWORD': 'Univesp55*',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'TIME_ZONE': 'America/Sao_Paulo',
     }
 }
 
@@ -108,18 +118,42 @@ LANGUAGE_CODE = 'pt-BR'
 
 TIME_ZONE = 'America/Sao_Paulo'
 
-USE_I18N = True
-
 USE_TZ = True
+
+USE_I18N = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'templates/static')]
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
+STATIC_ROOT = os.path.join('static')
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Messages
+
+from django.contrib.messages import constants
+
+MESSAGE_TAGS = {
+    constants.DEBUG: 'alert-primary',
+    constants.ERROR: 'alert-danger',
+    constants.SUCCESS: 'alert-success',
+    constants.INFO: 'alert-info',
+    constants.WARNING: 'alert-warning',
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Substitua pelo servidor SMTP do seu provedor de e-mail
+EMAIL_PORT = 587  # Porta SMTP (geralmente 587 para TLS)
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'univesp.pi005@gmail.com'  # Substitua pelo seu endereço de e-mail
+EMAIL_HOST_PASSWORD = 'tnlk obws uwhk gnzb'  # Substitua pela sua senha de e-mail
+DEFAULT_FROM_EMAIL = 'univesp.pi005@gmail.com'  # Substitua pelo seu endereço de e-mail
