@@ -1,3 +1,4 @@
+# admin.py
 from django.contrib import admin
 from .models import Produto, Lojista, Estoque, Vendas
 
@@ -27,9 +28,13 @@ class EstoqueAdmin(admin.ModelAdmin):
 admin.site.register(Estoque, EstoqueAdmin)
 
 class VendasAdmin(admin.ModelAdmin):
-    list_display = ('processo', 'lojista', 'data')
+    list_display = ('processo', 'lojista', 'data', 'valor_total')
     search_fields = ('lojista__nome_loja',)
     list_filter = ('processo', 'data')
     date_hierarchy = 'data'
+
+    def valor_total(self, obj):
+        return obj.valor_total
+    valor_total.short_description = "Valor Total (R$)"
 
 admin.site.register(Vendas, VendasAdmin)

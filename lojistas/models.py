@@ -1,9 +1,8 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator, EmailValidator, MinValueValidator
-
-
-
+import json
 
 class Produto(models.Model):
     CATEGORIAS = [
@@ -118,6 +117,7 @@ class Vendas(models.Model):
         ('realizado', 'Realizado'),
         ('nao_realizado', 'Não Realizado'),
         ('em_andamento', 'Em Andamento'),
+        ('cancelado', 'Cancelado'),
     ]
     
     processo = models.CharField(
@@ -127,4 +127,30 @@ class Vendas(models.Model):
         help_text='Estado do processo da reserva'
     )
     lojista = models.ForeignKey(Lojista, on_delete=models.CASCADE, help_text='Lojista responsável pela reserva')
-    data = models.DateTimeField(auto_now_add=True, help_text='Data e hora da realização da reserva')
+    data = models.DateTimeField(default=timezone.now, help_text='Data e hora da realização da reserva')
+    detalhes = models.TextField(help_text='Detalhes do pedido', default='Não há solicitação de reserva de produtos')
+
+    class Meta:
+        verbose_name = 'Venda'
+        verbose_name_plural = 'Vendas'
+
+    @property
+    def valor_total(self):
+        detalhes = json.loads(self.detalhes)
+        total = sum(float(item['valor_total']) for item in detalhes)
+        return total
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Vendas.objects.get(pk=self.pk)
+            if old_instance.processo != 'cancelado' and self.processo == 'cancelado':
+                self.restock_items()
+        super(Vendas, self).save(*args, **kwargs)
+
+    def restock_items(self):
+        detalhes = json.loads(self.detalhes)
+        for item in detalhes:
+            produto = Produto.objects.get(nome_produto=item['nome_produto'])
+            estoque_item = Estoque.objects.get(produto=produto)
+            estoque_item.quantidade += int(item['quantidade'])
+            estoque_item.save()

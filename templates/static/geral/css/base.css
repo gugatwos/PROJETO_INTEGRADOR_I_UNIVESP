@@ -2,8 +2,8 @@
   --primary-color: #006B31;
   --secondary-color: #FFD700;
   --text-color: #333333;
-  --light-gray: #f8f9fa;
-  --border-color: #e9ecef;
+  --light-gray: #050505;
+  --border-color: #480f66;
   --background-color: #008000;
 }
 
@@ -11,12 +11,12 @@ html, body {
   height: 100%;
   width: 100%;
   background-color: var(--background-color);
-  zoom: 1.2;
+  zoom: 1;
 }
 
 .bg-primary {
   background-color: var(--primary-color) !important;
-  color: #ffffff;
+  color: #480f66;
 }
 
 .btn-primary {
@@ -41,17 +41,17 @@ html, body {
 }
 
 .btn-outline-primary:hover {
-  color: #ffffff;
+  color:#480f66;
   background-color: var(--primary-color);
   border: 1px solid var(--primary-color);
 }
 
 .btn-outline-primary:active {
-  color: #ffffff;
+  color: #480f66;
   background-color: #004c22 !important;
   border: 1px solid #004c22;
 }
 
 .color-white {
-  color: #ffffff !important;
+  color: #480f66 !important;
 }

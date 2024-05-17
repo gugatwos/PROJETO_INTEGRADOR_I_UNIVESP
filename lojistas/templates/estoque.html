@@ -2,88 +2,124 @@
 {% load static %}
 
 {% block 'head' %}
-
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+<style>
+    body {
+        font-size: 0.9rem;
+    }
+    .page-catalog header,
+    .page-catalog main,
+    .page-catalog footer {
+        padding: 1rem;
+    }
+    .table {
+        font-size: 0.9rem;
+    }
+    .cart-drawer__overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1040;
+    }
+    .cart-drawer__overlay.open {
+        display: block;
+    }
+    .cart-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100%;
+        max-width: 300px;
+        height: 100%;
+        background: #fff;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+        z-index: 1041;
+    }
+    .cart-drawer__header,
+    .cart-drawer__footer {
+        padding: 1rem;
+    }
+    .cart-drawer__body {
+        overflow-y: auto;
+        padding: 1rem;
+    }
+    .cart-total {
+        font-weight: bold;
+    }
+</style>
 {% endblock 'head' %}
 
 {% block 'body' %}
-
 <body class="page-catalog">
-  <header class="bg-primary text-white py-3">
-    <nav class="container-fluid d-flex justify-content-between">
+  <header class="bg-primary text-white py-2">
+    <nav class="container-fluid d-flex justify-content-between align-items-center">
       <a href="{% url 'index' %}" class="text-white text-decoration-none">
-        <img
-          src="{% static 'home/img/logo-frutos-de-goias.png' %}"
-          class="w-25"
-          alt="Logo"
-        />
+        <img src="{% static 'home/img/logo-frutos-de-goias.png' %}" class="w-50" alt="Logo"/>
       </a>
-      <!-- Main Menu: Mobile -->
-      <button
-        class="btn btn-primary d-md-none"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasMenu"
-        aria-controls="offcanvasMenu"
-      >
-        <i class="bi bi-list"></i>
-      </button>
-      <div
-        class="offcanvas offcanvas-start"
-        tabindex="-1"
-        id="offcanvasMenu"
-        aria-labelledby="offcanvasMenuLabel"
-      >
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
-          <button
-            type="button"
-            class="btn-close text-reset"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="offcanvas-body">
-          <ul class="list-unstyled">
-            <li class="nav-item">
-              <a href="{% url 'index' %}" class="nav-link text-dark">Início</a>
-            </li>
-            <li class="nav-item">
-              <a href="{% url 'estoque' %}" class="nav-link text-dark">Estoque</a>
-            </li>
-            <li class="nav-item">
-              <a href="{% url 'pedidos' %}" class="nav-link text-dark">Pedidos</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <!-- Main Menu: Desktop -->
       <ul class="nav d-none d-md-flex">
-        <li class="nav-item">
-          <a href="{% url 'estoque' %}" class="nav-link text-white">Estoque</a>
-        </li>
-        <li class="nav-item">
-          <a href="{% url 'pedidos' %}" class="nav-link text-white">Pedidos</a>
-        </li>
+        <li class="nav-item"><a href="{% url 'estoque' %}" class="nav-link text-white">Estoque</a></li>
+        <li class="nav-item"><a href="{% url 'pedidos' %}" class="nav-link text-white">Pedidos</a></li>
       </ul>
-      <button class="cart-button btn btn-primary">
-        <i class="bi bi-cart"></i>
-        <span class="cart-button__count badge">0</span>
-      </button>
+      <a href="{% url 'estoque' %}" class="text-white text-decoration-none">
+        <img src="{% static 'lojistas/img/arara-frutos.png' %}" class="w-50" alt="Logo"/>
+      </a>
     </nav>
   </header>
 
-  <main class="container my-5">
-    <h1 class="my-5">Estoque</h1>
-    <h3 class="my-5">Selecione os produtos para a reserva</h3>
-    <div class="catalog-grid row row-cols-2 row-cols-lg-4 g-4">
+  <main class="container my-4">
+    <h1 class="mb-4">Estoque</h1>
+    <h3 class="mb-4">Selecione os produtos para a reserva</h3>
+
+    <!-- Tabela de Estoque -->
+    <div class="row">
+      <div class="col-lg-8">
+        <table id="estoqueTable" class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nome</th>
+              <th>Categoria</th>
+              <th>Subcategoria</th>
+              <th>Quantidade</th>
+              <th>Valor Unitário</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Produtos serão carregados dinamicamente -->
+          </tbody>
+        </table>
+      </div>
+      <!-- Tabela de Produtos Selecionados -->
+      <div class="col-lg-4">
+        <h4>Produtos Selecionados</h4>
+        <table id="selecionadosTable" class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Quantidade</th>
+              <th>Valor Total</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Produtos selecionados serão carregados aqui -->
+          </tbody>
+        </table>
+        <button class="btn btn-primary w-100" id="finalizarCompraBtn">Finalizar Reserva</button>
+      </div>
     </div>
   </main>
 
-  <footer class="bg-primary text-white py-3">
+  <footer class="bg-primary text-white py-2">
     <div class="container">
       <div class="row">
         <div class="col-12 col-md-6">
-          <p class="m-0">Frutos de Goiás</p>
+          <p class="m-0">Distribuidora localizada em Itanhaém da Frutos de Goiás</p>
         </div>
       </div>
     </div>
@@ -92,196 +128,152 @@
   <div class="cart-drawer__overlay">
     <div class="cart-drawer d-flex flex-column justify-content-between">
       <div class="cart-drawer__top">
-        <div class="cart-drawer__header bg-primary text-white p-3 d-flex justify-content-between">
+        <div class="cart-drawer__header bg-primary text-white p-2 d-flex justify-content-between">
           <h4 class="cart-drawer__title">Carrinho</h4>
           <button class="btn-close text-white" aria-label="Fechar"></button>
         </div>
-        <div class="cart-drawer__body p-3">
+        <div class="cart-drawer__body p-2">
           <ul class="list-unstyled">
-            <li class="cart-drawer__item d-flex justify-content-between align-items-center">
-              <span class="cart-drawer__item-title">Produto 01</span>
-              <span class="cart-drawer__item-price">R$ 9,99</span>
-              <button class="btn btn-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </li>
+            <!-- Itens do carrinho serão carregados dinamicamente -->
           </ul>
         </div>
       </div>
-      <div class="cart-drawer__footer bg-light p-3">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="cart-drawer__footer bg-light p-2">
+        <div class="d-flex justify-content-between align-items-center mb-2">
           <span>Total</span>
-          <span>R$ 9,99</span>
+          <span>R$ <span class="cart-total">0,00</span></span>
         </div>
-        <button class="btn btn-primary w-100">Finalizar compra</button>
-      </div>
-    </div>
-  </div>
-  <script>
-    const cartButton = document.querySelector('.cart-button');
-    const cartDrawerOverlay = document.querySelector('.cart-drawer__overlay');
-    const cartDrawerCloseButton = document.querySelector('.cart-drawer__header .btn-close');
-
-    cartButton.addEventListener('click', () => {
-      cartDrawerOverlay.classList.add('open');
-    });
-
-    cartDrawerCloseButton.addEventListener('click', () => {
-      cartDrawerOverlay.classList.remove('open');
-    });
-
-    cartDrawerOverlay.addEventListener('click', () => {
-      cartDrawerOverlay.classList.remove('open');
-    });
-  </script>
-
-  <div id="quick-add-to-cart" class="modal">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Adicionar ao carrinho</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body">
-          <img
-            src="https://via.placeholder.com/300/B5F587/ffffff/?text=Produto+01"
-            class="quick-add-to-cart__product-img mb-3 img-fluid"
-            alt="Produto 01"
-            loading="lazy"
-            width="300"
-            height="300"
-          />
-          <p class="quick-add-to-cart__product-title">Produto 01</p>
-          <p class="quick-add-to-cart__product-price">R$ 9,99</p>
-          <form>
-            <div class="input-group mb-3">
-              <span class="input-group-text quick-add-to-cart__minus-button">
-                <i class="bi bi-dash"></i>
-              </span>
-              <input type="text" class="form-control" value="1" />
-              <span class="input-group-text quick-add-to-cart__plus-button">
-                <i class="bi bi-plus"></i>
-              </span>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Adicionar ao carrinho</button>
-          </form>
-        </div>
+        <button class="btn btn-primary w-100">Finalizar Reserva</button>
       </div>
     </div>
   </div>
 
-  <template id="product-template">
-    <div class="col">
-      <div class="product-card card h-100" data-product-title="" data-product-price="" data-product-image="">
-        <img
-          src="https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+01"
-          class="product-card__img img-fluid"
-          alt="Produto 01"
-          width="300"
-          height="300"
-        />
-        <div class="card-body">
-          <h5 class="product-card__title card-title">Produto 01</h5>
-          <p class="product-card__price card-text">R$ 9,99</p>
-          <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#quick-add-to-cart">
-            <i class="bi bi-cart-plus"></i> Adicionar
-        </div>
-      </div>
-    </div>
-  </template>
-
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
   <script>
-    const catalogGrid = document.querySelector('.catalog-grid');
-    const productTemplate = document.querySelector('#product-template');
+    $(document).ready(function() {
+      // Inicializar DataTables
+      var table = $('#estoqueTable').DataTable({
+        ajax: {
+          url: "{% url 'api_estoque' %}",
+          dataSrc: ''
+        },
+        columns: [
+          { data: 'codigo' },
+          { data: 'nome_produto' },
+          { data: 'categoria' },
+          { data: 'subcategoria' },
+          { 
+            data: 'quantidade', 
+            render: function(data, type, row) {
+              return '<input type="number" class="form-control form-control-sm quantity-picker" min="1" max="' + data + '" value="1">';
+            }
+          },
+          { data: 'valor' },
+          {
+            data: null,
+            className: "dt-center",
+            defaultContent: '<button class="btn btn-primary btn-sm add-to-cart">Adicionar</button>'
+          }
+        ]
+      });
 
-    const products = [
-      {
-        title: 'Produto 01',
-        price: '9,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+01'
-      },
-      {
-        title: 'Produto 02',
-        price: '19,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+02'
-      },
-      {
-        title: 'Produto 03',
-        price: '29,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+03'
-      },
-      {
-        title: 'Produto 04',
-        price: '39,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+04'
-      },
-      {
-        title: 'Produto 05',
-        price: '49,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+05'
-      },
-      {
-        title: 'Produto 06',
-        price: '59,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+06'
-      },
-      {
-        title: 'Produto 07',
-        price: '69,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+07'
-      },
-      {
-        title: 'Produto 08',
-        price: '79,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+08'
-      },
-      {
-        title: 'Produto 09',
-        price: '89,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+09'
-      },
-      {
-        title: 'Produto 10',
-        price: '99,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+10'
-      },
-      {
-        title: 'Produto 11',
-        price: '109,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+11'
-      },
-      {
-        title: 'Produto 12',
-        price: '119,99',
-        image: 'https://via.placeholder.com/300/f5f5f5/999999/?text=Produto+12'
+      // Filtros
+      $('#categoriaFiltro').on('change', function () {
+        table.column(2).search(this.value).draw();
+      });
+      $('#subcategoriaFiltro').on('change', function () {
+        table.column(3).search(this.value).draw();
+      });
+
+      // Produtos selecionados
+      var selectedTable = $('#selecionadosTable').DataTable({
+        columns: [
+          { data: 'nome_produto' },
+          { 
+            data: 'quantidade', 
+            render: function(data, type, row) {
+              return '<input type="number" class="form-control form-control-sm selected-quantity" min="1" value="' + data + '">';
+            }
+          },
+          { 
+            data: 'valor', 
+            render: function(data, type, row) {
+              return 'R$ ' + (data * row.quantidade).toFixed(2);
+            }
+          },
+          {
+            data: null,
+            className: "dt-center",
+            defaultContent: '<button class="btn btn-danger btn-sm remove-from-cart">Remover</button>'
+          }
+        ]
+      });
+
+      // Adicionar ao carrinho
+      $('#estoqueTable tbody').on('click', 'button.add-to-cart', function() {
+        var row = table.row($(this).parents('tr'));
+        var data = row.data();
+        var quantidade = $(this).parents('tr').find('.quantity-picker').val();
+        
+        if (quantidade > data.quantidade) {
+          alert('Erro: A quantidade selecionada excede a quantidade disponível em estoque.');
+        } else {
+          data.quantidade = quantidade;
+          selectedTable.row.add(data).draw();
+          updateCartTotal();
+        }
+      });
+
+      // Remover do carrinho
+      $('#selecionadosTable tbody').on('click', 'button.remove-from-cart', function() {
+        selectedTable.row($(this).parents('tr')).remove().draw();
+        updateCartTotal();
+      });
+
+      // Atualizar total do carrinho
+      function updateCartTotal() {
+        var total = 0;
+        selectedTable.rows().data().each(function(value, index) {
+          total += parseFloat(value.valor) * value.quantidade;
+        });
+        $('.cart-total').text(total.toFixed(2));
       }
-    ];
 
-    products.forEach(product => {
-      const clone = productTemplate.content.cloneNode(true);
-      const productCard = clone.querySelector('.product-card');
-      const productTitle = productCard.dataset.productTitle = product.title;
-      const productPrice = productCard.dataset.productPrice = product.price;
-      const productImage = productCard.dataset.productImage = product.image;
-      const productImg = productCard.querySelector('.product-card__img');
-      const productTitleElement = productCard.querySelector('.product-card__title');
-      const productPriceElement = productCard.querySelector('.product-card__price');
+      // Finalizar compra
+      $('#finalizarCompraBtn').on('click', function() {
+        var pedido = [];
+        selectedTable.rows().data().each(function(value, index) {
+          pedido.push({
+            nome_produto: value.nome_produto,
+            quantidade: value.quantidade,
+            valor_unitario: value.valor,
+            valor_total: (value.valor * value.quantidade).toFixed(2)
+          });
+        });
 
-      productImg.src = productImage;
-      productImg.alt = productTitle;
-      productTitleElement.textContent = productTitle;
-      productPriceElement.textContent = `R$ ${productPrice}`;
-
-      catalogGrid.appendChild(clone);
+        $.ajax({
+          type: 'POST',
+          url: '{% url "finalizar_compra" %}',
+          data: {
+            pedido: JSON.stringify(pedido),
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function(response) {
+            alert('Reserva finalizada com sucesso!');
+            selectedTable.clear().draw();
+            updateCartTotal();
+          },
+          error: function(error) {
+            alert('Erro ao finalizar a reserva.');
+          }
+        });
+      });
     });
   </script>
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
-
 </body>
 {% endblock 'body' %}
 </html>

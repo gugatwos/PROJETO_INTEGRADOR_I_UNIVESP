@@ -87,6 +87,7 @@ DATABASES = {
         'PASSWORD': 'Univesp55*',
         'HOST': 'localhost',
         'PORT': '3306',
+        'TIME_ZONE': 'America/Sao_Paulo',
     }
 }
 
@@ -117,9 +118,9 @@ LANGUAGE_CODE = 'pt-BR'
 
 TIME_ZONE = 'America/Sao_Paulo'
 
-USE_I18N = True
-
 USE_TZ = True
+
+USE_I18N = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -148,3 +149,11 @@ MESSAGE_TAGS = {
     constants.INFO: 'alert-info',
     constants.WARNING: 'alert-warning',
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Substitua pelo servidor SMTP do seu provedor de e-mail
+EMAIL_PORT = 587  # Porta SMTP (geralmente 587 para TLS)
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'univesp.pi005@gmail.com'  # Substitua pelo seu endereço de e-mail
+EMAIL_HOST_PASSWORD = 'tnlk obws uwhk gnzb'  # Substitua pela sua senha de e-mail
+DEFAULT_FROM_EMAIL = 'univesp.pi005@gmail.com'  # Substitua pelo seu endereço de e-mail
